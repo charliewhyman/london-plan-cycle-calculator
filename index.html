@@ -7,8 +7,384 @@
         <link rel='stylesheet' href='css/style.css' />
     </head>
     <body>
-        <div class='container'>
-            <h1>2021 London Plan Cycle Parking Calculator</h1>
+        <div class='container' id='headerContainer'>
+            <h1>London Plan 2021 Cycle Parking Calculator</h1>
+        </div>
+        <div class='container' id='descriptionContainer'>
+            <p>
+                The 
+                <a href='https://www.london.gov.uk/what-we-do/planning/london-plan/new-london-plan/london-plan-2021'>London Plan 2021</a>
+                 sets standards for cycle parking in new developments in London.
+            </p>
+            <p>
+                Please note that since the publication of the London Plan, the Planning Land Use Classes have changed.
+            </p>
+        </div>
+        <div class='container' id='standardsContainer'>
+            <p>Table 10.2 of the London Plan 2021</p>
+            <table id='standards'>
+                <tbody>
+                    <tr>
+                        <td colspan="2">
+                            <p>&nbsp;</p>
+                            <p><strong>Use Class</strong></p>
+                        </td>
+                        <td>
+                            <p><strong>Long-stay (e.g. for residents or employees)</strong></p>
+                        </td>
+                        <td>
+                            <p><strong>Short-stay (e.g. for visitors or customers)</strong></p>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td rowspan="2">
+                            <p>A1</p>
+                        </td>
+                        <td >
+                            <p>food retail above 100sqm</p>
+                        </td>
+                        <td>
+                            <p>1 space per 175 sqm gross external area (GEA)</p>
+                            <p>&nbsp;</p>
+                        </td>
+                        <td>
+                            <p>
+                                areas with higher cycle parking standards (see Figure 10.3):
+                                <ul>
+                                    <li>first 750 sqm: 1 space per 20 sqm;</li>
+                                    <li>thereafter: 1 space per 150 sqm (GEA)</li>                  
+                                </ul>
+                                rest of London: 
+                                <ul>
+                                    <li>first 750 sqm: 1 space per 40 sqm;</li>
+                                    <li>thereafter: 1 space per 300 sqm (GEA)</li>                  
+                                </ul>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                            <p>non-food retail above 100sqm</p>
+                        </td>
+                        <td>
+                            <p>
+                                <ul>
+                                    <li>first 1000 sqm: 1 space per 250 sqm</li>
+                                    <li>thereafter: 1 space per 1000 sqm (GEA)</li>
+                                </ul>
+                            </p>
+                        </td>
+                        <td>
+                            <p>
+                                areas with higher cycle parking standards (see Figure 10.3): 
+                                <ul>
+                                    <li>first 1000 sqm: 1 space per 60 sqm;</li>
+                                    <li>thereafter: 1 space per 500 sqm (GEA)</li>                  
+                                </ul>
+                                rest of London: 
+                                <ul>
+                                    <li>first 1000 sqm: 1 space per 125 sqm;</li>
+                                    <li>thereafter: 1 space per 1000 sqm (GEA)</li>                  
+                                </ul>
+                            </p>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                            <p>A2-A5</p>
+                        </td>
+                        <td >
+                            <p>financial /
+                                professional
+                                services; cafes
+                                & restaurants;
+                                drinking
+                                establishments;
+                                take-aways above
+                                100 sqm</p>
+                        </td>
+                        <td>
+                            <p>1 space per 175 sqm
+                                (GEA)</p>
+                        </td>
+                        <td>
+                            <p>
+                                areas with higher cycle parking standards (see Figure 10.3): 
+                                <ul>
+                                    <li>1 space per 20 sqm
+                                        (GEA)</li>            
+                                </ul>
+                                rest of London: 
+                                <ul>
+                                    <li>1 space per 40 sqm
+                                        (GEA)</li>
+                            </p>
+                        </td>
+                        </tr>
+                        <td rowspan="2">
+                            <p>B1</p>
+                        </td>
+                        <td>
+                            <p>business offices</p>
+                        </td>
+                        <td>
+                            <p>
+                                areas with higher cycle parking standards (see Figure 10.3): 
+                                <ul>
+                                    <li>1 space
+                                        per 75 sqm</li>            
+                                </ul>
+                                rest of London: 
+                                <ul>
+                                    <li>1
+                                        space per 150 sqm
+                                        (GEA)</li>
+                            </p>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>first 5,000 sqm: 1 space per 500 sqm (GEA)</li>
+                                <li>thereafter: 1 space per 5,000 sqm (GEA)</li>
+                            </ul>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                            <p>light industry and research and development</p>
+                        </td>
+                        <td>
+                            <p>1 space per 250 sqm (GEA)</p>
+                        </td>
+                        <td>
+                            <p>1 space per 1000 sqm (GEA)</p>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                            <p>B2-B8</p>
+                        </td>
+                        <td>
+                            <p>general industrial, storage or distribution</p>
+                        </td>
+                        <td>
+                            <p>1 space per 500 sqm (GEA)</p>
+                        </td>
+                        <td>
+                            <p>1 space per 1000 sqm (GEA)</p>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                            <p>C1</p>
+                        </td>
+                        <td>
+                            <p>hotels (bars, restaurants, gyms etc open to the public should be considered individually under relevant standards)</p>
+                        </td>
+                        <td>
+                            <p>1 space per 20 bedrooms</p>
+                        </td>
+                        <td>
+                            <p>1 space per 50 bedrooms</p>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td rowspan="2">
+                            <p>C2</p>
+                        </td>
+                        <td>
+                            <p>hospitals</p>
+                        </td>
+                        <td>
+                            <p>1 space per 5 FTE staff</p>
+                        </td>
+                        <td>
+                            <p>1 space per 30 FTE staff</p>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                        <p>care homes / secure accommodation</p>
+                        </td>
+                        <td>
+                        <p>1 space per 5 FTE staff</p>
+                        </td>
+                        <td>
+                        <p>1 space per 20 bedrooms</p>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                            <p>C3-C4</p>
+                        </td>
+                        <td>
+                            <p>dwellings (all)</p>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>1 space per studio or
+                                    1 person 1 bedroom
+                                    dwelling</li>
+                                <li>1.5 spaces per 2
+                                    person 1 bedroom
+                                    dwelling</li>
+                                <li>2 spaces per all other
+                                    dwellings</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>5 to 40 dwellings: 2
+                                    spaces</li>
+                                <li>Thereafter: 1 space per
+                                    40 dwellings</li>
+                            </ul>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td rowspan="5">
+                            <p>D1</p>
+                        </td>
+                        <td>
+                            <p>nurseries</p>
+                        </td>
+                        <td colspan="2">
+                            <p>1 space per 8 FTE staff + 1 space per 8 students</p>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                            <p>primary schools
+                                / secondary
+                                schools/ sixth
+                                form colleges</p>    
+                        </td>
+                        <td>
+                            <p>1 space per 8 FTE staff +
+                                1 space per 8 students</p>
+                        </td>
+                        <td>
+                            <p>
+                                1 space per 100 students
+                            </p>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                            <p>universities and colleges</p>
+                        </td>
+                        <td>
+                            <p>1 space per 4 staff + 1 space per 20 FTE students</p>
+                        </td>
+                        <td>
+                            <p>1 space per 7 FTE students</p>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                            <p>health centre, including dentists</p>
+                        </td>
+                        <td>
+                            <p>1 space per 5 FTE staff</p>
+                        </td>
+                        <td>
+                            <p>1 space per 3 FTE staff</p>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                            <p>other (e.g. library, church, etc.)</p>
+                        </td>
+                        <td>
+                            <p>1 space per 8 FTE staff</p>
+                        </td>
+                        <td>
+                            <p>1 space per 100 sqm (GEA)</p>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td rowspan="2">
+                            <p>D2</p>
+                        </td>
+                        <td>
+                            <p>sports (e.g. sports hall, swimming, gymnasium, etc.)</p>
+                        </td>
+                        <td>
+                            <p>1 space per 8 FTE staff</p>
+                        </td>
+                        <td>
+                            <p>1 space per 100 sqm (GEA)</p>
+                        </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p>other (e.g. cinema, bingo, etc.)</p>
+                            </td>
+                            <td>
+                                <p>1 space per 8 FTE staff</p>
+                            </td>
+                            <td>
+                                <p>1 per 30 seats</p>
+                            </td>
+                        </tr>
+                        <tr>
+                        <td colspan="2">
+                            <p>Student accomodation</p>
+                        </td>
+                        <td>
+                            <p>0.75 spaces per bedroom</p>
+                        </td>
+                        <td>
+                            <p>1 space per 40 bedrooms</p>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td colspan="2">
+                            <p>Specialist older persons housing**</p>
+                        </td>
+                        <td>
+                            <p>1 space per 10 bedrooms</p>
+                        </td>
+                        <td>
+                            <p>1 space per 40 bedrooms</p>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td colspan="2">
+                            <p>Sui generis</p>
+                        </td>
+                        <td colspan="2">
+                            <p>As per most relevant other standard e.g. casino and
+                                theatre = D2, room in large-scale purpose-built shared
+                                living = studio C3</p>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td colspan="2">
+                            <p>Stations</p>
+                        </td>
+                        <td colspan="2">
+                            <p>To be considered on a case by case basis through
+                                liaison with TfL. The level of provision should take into
+                                account the type and location of the station, current
+                                and future rail and cycle demand and the potential for
+                                journey stages to and from the station to be made
+                                by cycle. A step-change in provision is expected,
+                                especially at termini, in order to meet the Mayor’s
+                                mode share target.</p>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td colspan="4">
+                            <p>* The minimum of two short-stay and two long-stay cycle parking spaces does
+                                not apply to A1-A5 developments of less than 100 sqm or to short-stay parking at
+                                residential developments of fewer than 5 dwellings.</p>
+                            <p>** as defined by Policy H13 Specialist older persons housing. The Mayor will continue
+                                to gather evidence with a view to revising and updating this standard. Where
+                                appropriate, proposals should provide higher provision than the above standard where
+                                it is needed.</p>
+                        </td>
+                        </tr>
+                        </tbody>
+            </table>
         </div>
     </body>
     <script src='js/script.js'></script>
