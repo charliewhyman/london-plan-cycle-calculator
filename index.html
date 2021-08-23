@@ -20,12 +20,69 @@
                 Please note that since the publication of the London Plan, the Planning Land Use Classes have changed.
             </p>
         </div>
+        <div class='container' id='calculatorContainer'>
+            <h2>Cycle Parking Calculator</h2>
+            <form name='landUseForm' id='landUseForm'>
+                <select name='landUseClassSel' id='landUseClassSel' size='1'>
+                    <option value='' selected='selected'>Select Class</option>
+                </select>
+                <br/>
+                <br/>
+                <select name='landUseSubClassSel' id='landUseSubClassSel' size='1'>
+                    <option value='' selected='selected'>Select Sub-Class</option>
+                </select>
+                <br><br>
+                <label>
+                    Area with higher cycle parking standards?
+                    <input type="radio" name="choice-radio">
+                    Yes
+                  </label>
+                  <label>
+                    <input type="radio" name="choice-radio">
+                    No
+                  </label>
+              </form>
+              <div class='container' id='calculatorTableContainer'>
+                <table id='calculator'>
+                    <tbody>
+                        <tr>
+                            <td >
+                                <p><strong>Use Class</strong></p>
+                            </td>
+                            <td >
+                                <p><strong>Land Use</strong></p>
+                            </td>
+                            <td >
+                                <p><strong>Quantum</strong></p>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p>
+                                    A1
+                                </p>
+                            </td>
+                            <td>
+                                <p>
+                                    A1
+                                </p>
+                            </td>
+                            <td>
+                                <p>
+                                    A1
+                                </p>
+                            </td>
+                        </tr>
+                            </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
         <div class='container' id='standardsContainer'>
             <p>Table 10.2 of the London Plan 2021</p>
             <table id='standards'>
                 <tbody>
                     <tr>
-                        <td colspan="2">
+                        <td colspan='2'>
                             <p>&nbsp;</p>
                             <p><strong>Use Class</strong></p>
                         </td>
@@ -37,7 +94,7 @@
                         </td>
                         </tr>
                         <tr>
-                        <td rowspan="2">
+                        <td rowspan='2'>
                             <p>A1</p>
                         </td>
                         <td >
@@ -120,7 +177,7 @@
                             </p>
                         </td>
                         </tr>
-                        <td rowspan="2">
+                        <td rowspan='2'>
                             <p>B1</p>
                         </td>
                         <td>
@@ -187,7 +244,7 @@
                         </td>
                         </tr>
                         <tr>
-                        <td rowspan="2">
+                        <td rowspan='2'>
                             <p>C2</p>
                         </td>
                         <td>
@@ -240,13 +297,13 @@
                         </td>
                         </tr>
                         <tr>
-                        <td rowspan="5">
+                        <td rowspan='5'>
                             <p>D1</p>
                         </td>
                         <td>
                             <p>nurseries</p>
                         </td>
-                        <td colspan="2">
+                        <td colspan='2'>
                             <p>1 space per 8 FTE staff + 1 space per 8 students</p>
                         </td>
                         </tr>
@@ -301,7 +358,7 @@
                         </td>
                         </tr>
                         <tr>
-                        <td rowspan="2">
+                        <td rowspan='2'>
                             <p>D2</p>
                         </td>
                         <td>
@@ -326,7 +383,7 @@
                             </td>
                         </tr>
                         <tr>
-                        <td colspan="2">
+                        <td colspan='2'>
                             <p>Student accomodation</p>
                         </td>
                         <td>
@@ -337,7 +394,7 @@
                         </td>
                         </tr>
                         <tr>
-                        <td colspan="2">
+                        <td colspan='2'>
                             <p>Specialist older persons housing**</p>
                         </td>
                         <td>
@@ -348,20 +405,20 @@
                         </td>
                         </tr>
                         <tr>
-                        <td colspan="2">
+                        <td colspan='2'>
                             <p>Sui generis</p>
                         </td>
-                        <td colspan="2">
+                        <td colspan='2'>
                             <p>As per most relevant other standard e.g. casino and
                                 theatre = D2, room in large-scale purpose-built shared
                                 living = studio C3</p>
                         </td>
                         </tr>
                         <tr>
-                        <td colspan="2">
+                        <td colspan='2'>
                             <p>Stations</p>
                         </td>
-                        <td colspan="2">
+                        <td colspan='2'>
                             <p>To be considered on a case by case basis through
                                 liaison with TfL. The level of provision should take into
                                 account the type and location of the station, current
@@ -373,7 +430,7 @@
                         </td>
                         </tr>
                         <tr>
-                        <td colspan="4">
+                        <td colspan='4'>
                             <p>* The minimum of two short-stay and two long-stay cycle parking spaces does
                                 not apply to A1-A5 developments of less than 100 sqm or to short-stay parking at
                                 residential developments of fewer than 5 dwellings.</p>
@@ -386,6 +443,5 @@
                         </tbody>
             </table>
         </div>
-    </body>
     <script src='js/script.js'></script>
 </html>
