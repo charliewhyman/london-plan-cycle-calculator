@@ -1,6 +1,7 @@
 'use strict';
 
-var landUseObject = {
+//define an object for the land use classes/sub-classes, to use in the cascading dropdowns
+var landUseDefinitions = {
     'A1': ['food retail above 100sqm', 'non-food retail above 100sqm'],
     'A2-A5': ['financial / professional services; cafes & restaurants; drinking establishments; take-aways above 100 sqm'],
     'B1': ['business offices'],
@@ -21,19 +22,61 @@ var landUseObject = {
     'Older persons housing': ['Older persons housing'],
 }
 
-window.onload = function () {
-    var landUseClassSel = document.getElementById('landUseClassSel'),
-        landUseSubClassSel = document.getElementById('landUseSubClassSel')
-    for (var landUseClass in landUseObject) {
-        landUseClassSel.options[landUseClassSel.options.length] = new Option(landUseClass, landUseClass);
-    }
-    landUseClassSel.onchange = function () {
-        landUseSubClassSel.length = 1; // remove all options bar first
-        if (this.selectedIndex < 1) return; // done  
-        var ft = landUseObject[this.value];
-        for (var field in landUseObject[this.value]) {
-            landUseSubClassSel.options[landUseSubClassSel.options.length] = new Option(ft[field], field);
+//create a display controller function
+const displayController = (() => {
+    //create a function to populate and link the cascading dropdowns
+    const fillDropdowns = () => {
+        var landUseClassSel = document.getElementById('landUseClassSel');
+        let landUseSubClassSel = document.getElementById('landUseSubClassSel');
+
+        for (let landUseClass in landUseDefinitions) {
+            landUseClassSel.options[landUseClassSel.options.length] = new Option(landUseClass, landUseClass);
         }
-    }
-    landUseClassSel.onchange();
-}
+        const fillSubDropdown = function () {
+            landUseSubClassSel.length = 1; // remove all options in dropdown first
+            if (this.selectedIndex < 1) return;
+            let fieldList = landUseDefinitions[this.value];
+            for (let field in fieldList) {
+                landUseSubClassSel.options[landUseSubClassSel.options.length] = new Option(fieldList[field], field);
+            }
+        }
+        landUseClassSel.addEventListener('change',fillSubDropdown);
+        landUseSubClassSel.addEventListener('change',fillCalculatorCells);
+
+
+    };
+
+    const fillCalculatorCells = () => {
+        let landUseClassSelection = landUseClassSel.options[landUseClassSel.selectedIndex].text;
+        let landUseSubClassSelection = landUseSubClassSel.options[landUseSubClassSel.selectedIndex].text;
+        let landUseClassCell = document.getElementById('landUseClassCell');
+        let landUseSubClassCell = document.getElementById('landUseSubClassCell');
+
+        if (landUseClassSelection == 'Select Class') {
+            return;
+        } else {
+            landUseClassCell.textContent = landUseClassSelection;
+        };
+        if (landUseSubClassSelection == 'Select Sub-Class') {
+            return;
+        } else {
+            landUseSubClassCell.textContent = landUseSubClassSelection;
+        };
+
+
+    };
+
+    return {   
+        fillDropdowns,
+        fillCalculatorCells
+    };
+})();
+
+displayController.fillDropdowns();
+displayController.fillCalculatorCells();
+
+
+
+
+
+

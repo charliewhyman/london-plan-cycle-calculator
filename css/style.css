@@ -4,7 +4,6 @@ html {
 
 body {
   margin: 0px;
-
 }
 
 .container {
@@ -31,6 +30,10 @@ table {
 td {
   border: 1px solid black;
   text-align: center;
+}
+
+tr {
+  min-height: 100px;
 }
 
 li {
