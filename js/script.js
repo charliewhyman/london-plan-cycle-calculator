@@ -96,8 +96,43 @@ const logicController = (() => {
 
         quantumTypeElement.textContent = selectedQuantumType;
     };
+
+    const calculateShortStayParking = () => {
+        let roundedShortStayParking = 'Enter quantum';
+
+        //if statement to calculate required short-stay parking
+        return roundedShortStayParking;
+
+    };
+
+    const calculateLongStayParking = () => {
+        let roundedLongStayParking = 'Enter quantum';
+
+        //if statement to calculate required long-stay parking
+        return roundedLongStayParking;
+
+    };
+
+    const updateOutput = () => {
+        //update the short stay parking output box
+        let shortStayOutputElement = document.getElementById('shortStayParkingOutput');
+        shortStayOutputElement.value = calculateShortStayParking();
+        shortStayOutputElement.setAttribute('readonly', 'readonly');
+
+        //update the long stay parking output box
+        let longStayOutputElement = document.getElementById('longStayParkingOutput');
+        longStayOutputElement.value = calculateLongStayParking();
+        longStayOutputElement.setAttribute('readonly', 'readonly');
+    };
     
     return {   
         setQuantumType,
+        calculateShortStayParking,
+        calculateLongStayParking,
+        updateOutput
     };    
 })();
+
+logicController.calculateShortStayParking();
+logicController.calculateLongStayParking();
+logicController.updateOutput();
