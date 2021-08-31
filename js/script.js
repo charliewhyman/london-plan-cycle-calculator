@@ -59,7 +59,7 @@ const displayController = (() => {
         };
     };
     
-    function fillSubDropdowns() {
+    const fillSubDropdowns = () => {
         let newLandUseDefinitionsArray = newLandUseDefinitions.filter(function(e) {
             return e.landUse === landUseClassSel.options[landUseClassSel.selectedIndex].text;;
         })
@@ -103,7 +103,3 @@ displayController.fillDropdowns();
 displayController.fillCalculatorCells();
 
 //define logic controller for calculator
-
-
-
-
