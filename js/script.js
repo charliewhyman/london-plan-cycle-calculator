@@ -68,6 +68,7 @@ const displayController = (() => {
         } else {
             landUseSubClassCell.textContent = subLandUseClassSelection;
             logicController.setQuantumType();
+            logicController.calculateShortStayParking();
         };
     };
     
@@ -86,29 +87,43 @@ displayController.fillCalculatorCells();
 
 //define logic controller for calculator
 const logicController = (() => {
-    
+    let quantumTypeElement = document.getElementById('quantumType');
+
     //create a function to populate and link the cascading dropdowns
     const setQuantumType = () => {
         let selectedSubLandUse = subLandUseClassSel.options[subLandUseClassSel.selectedIndex].text;
-        let quantumTypeElement = document.getElementById('quantumType');
-        let selectedObject = landUseDefinitions[landUseDefinitions.map(function (item) { return item.subLandUse; }).indexOf(selectedSubLandUse)];
-        let selectedQuantumType = selectedObject.quantumType;
+        let selectedLandUseObject = landUseDefinitions[landUseDefinitions.map(function (item) { return item.subLandUse; }).indexOf(selectedSubLandUse)];
+        let selectedQuantumType = selectedLandUseObject.quantumType;
 
         quantumTypeElement.textContent = selectedQuantumType;
+        console.log(selectedQuantumType)
     };
 
     const calculateShortStayParking = () => {
         let roundedShortStayParking = 'Enter quantum';
-
+        let selectedQuantumType = quantumTypeElement.textContent;
         //if statement to calculate required short-stay parking
+        if (selectedQuantumType === '') {
+            return;
+        } else if (selectedQuantumType = 'sqm') {
+            console.log(selectedQuantumType)
+        } else if (selectedQuantumType = 'FTE staff') {
+            console.log(selectedQuantumType)
+        } else {
+            console.log(selectedQuantumType)
+        }
+        
         return roundedShortStayParking;
 
     };
 
     const calculateLongStayParking = () => {
         let roundedLongStayParking = 'Enter quantum';
+        let inputQuantum = document.getElementById('quantumInput').value;
 
         //if statement to calculate required long-stay parking
+
+        
         return roundedLongStayParking;
 
     };
