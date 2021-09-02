@@ -23,6 +23,10 @@ const landUseDefinitions = [
    {landUse:'Other', subLandUse:'Older persons housing', quantumType:'bedrooms'},    
 ]
 
+const parkingStandards = [
+    {subLandUse:'food retail above 100sqm', longStayRatio:175}  
+ ]
+
 //create a display controller function
 const displayController = (() => {
     let landUseClassSel = document.getElementById('landUseClassSel');
@@ -88,6 +92,7 @@ displayController.fillCalculatorCells();
 //define logic controller for calculator
 const logicController = (() => {
     let quantumTypeElement = document.getElementById('quantumType');
+    let inputQuantum = document.getElementById('quantumInput').value;
 
     //create a function to populate and link the cascading dropdowns
     const setQuantumType = () => {
@@ -101,25 +106,12 @@ const logicController = (() => {
 
     const calculateShortStayParking = () => {
         let roundedShortStayParking = 'Enter quantum';
-        let selectedQuantumType = quantumTypeElement.textContent;
-        //if statement to calculate required short-stay parking
-        if (selectedQuantumType === '') {
-            return;
-        } else if (selectedQuantumType = 'sqm') {
-            console.log(selectedQuantumType)
-        } else if (selectedQuantumType = 'FTE staff') {
-            console.log(selectedQuantumType)
-        } else {
-            console.log(selectedQuantumType)
-        }
-        
         return roundedShortStayParking;
 
     };
 
     const calculateLongStayParking = () => {
         let roundedLongStayParking = 'Enter quantum';
-        let inputQuantum = document.getElementById('quantumInput').value;
 
         //if statement to calculate required long-stay parking
 
