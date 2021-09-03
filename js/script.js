@@ -23,8 +23,9 @@ const landUseDefinitions = [
    {landUse:'Other', subLandUse:'Older persons housing', quantumType:'bedrooms'},    
 ]
 
-const parkingStandards = [
-    {subLandUse:'food retail above 100sqm', longStayRatio:175}  
+const shortStayParkingStandards = [
+    {subLandUse:'food retail above 100sqm', higherStandards:true, Boundary1:750, Ratio1:20, Boundary2:Infinity, Ratio2:150},
+    {subLandUse:'food retail above 100sqm', higherStandards:false, Boundary1:750, Ratio1:40, Boundary2:Infinity, Ratio2:300}
  ]
 
 //create a display controller function
@@ -43,46 +44,54 @@ const displayController = (() => {
     };
     
     const fillSubDropdowns = () => {
-        subLandUseClassSel.innerText ='';
-        let landUseDefinitionsArray = landUseDefinitions.filter(function(e) {
-            return e.landUse === landUseClassSel.options[landUseClassSel.selectedIndex].text;
-        })
-        let subLandUseArray = landUseDefinitionsArray.map(object => object.subLandUse);
-
-        for (let index = 0; index < subLandUseArray.length; index++) {
-            const subLandUseClass = subLandUseArray[index];
-            subLandUseClassSel.options[subLandUseClassSel.options.length] = new Option(subLandUseClass, subLandUseClass);
-        };
-        fillCalculatorCells();
+        let landUseClassSelection = landUseClassSel.options[landUseClassSel.selectedIndex].text;
+        if (landUseClassSelection == 'Select Class') {
+            return;
+        } else {
+            let landUseDefinitionsArray = landUseDefinitions.filter(function(e) {
+                return e.landUse === landUseClassSel.options[landUseClassSel.selectedIndex].text;
+            })
+            let subLandUseArray = landUseDefinitionsArray.map(object => object.subLandUse);
+            subLandUseClassSel.options.length = 0;
+            for (let index = 0; index < subLandUseArray.length; index++) {
+                const subLandUseClass = subLandUseArray[index];
+                subLandUseClassSel.options[subLandUseClassSel.options.length] = new Option(subLandUseClass, subLandUseClass);
+            };
+        }
+        
     };
 
     const fillCalculatorCells = () => {
         let landUseClassSelection = landUseClassSel.options[landUseClassSel.selectedIndex].text;
-        let subLandUseClassSelection = subLandUseClassSel.options[subLandUseClassSel.selectedIndex].text;
         let landUseClassCell = document.getElementById('landUseClassCell');
+        let subLandUseClassSelection = subLandUseClassSel.options[subLandUseClassSel.selectedIndex].text;
         let landUseSubClassCell = document.getElementById('landUseSubClassCell');
 
-        if (landUseClassSelection == 'Select Class') {
+        if (landUseClassSelection == 'Select Class' && subLandUseClassSelection == 'Select Sub-Class') {
+            landUseClassCell.textContent = '';
+            landUseSubClassCell.textContent = '';
+
+        } else if (landUseClassSelection === 'Select Class' && subLandUseClassSelection !== 'Select Sub-Class') {
             return;
+
+        } else if (landUseClassSelection !== 'Select Class' && subLandUseClassSelection === 'Select Sub-Class') {
+            subLandUseClassSel.selectedIndex = 0;
         } else {
             landUseClassCell.textContent = landUseClassSelection;
-        };
-        if (subLandUseClassSelection == 'Select Sub-Class') {
-            return;
-        } else {
             landUseSubClassCell.textContent = subLandUseClassSelection;
             logicController.setQuantumType();
             logicController.calculateShortStayParking();
         };
     };
-    
+
+    landUseClassSel.addEventListener('change',fillCalculatorCells);
     landUseClassSel.addEventListener('change',fillSubDropdowns);
     subLandUseClassSel.addEventListener('change',fillCalculatorCells);
     
     return {   
         fillDropdowns,
         fillSubDropdowns,
-        fillCalculatorCells
+        fillCalculatorCells,
     };    
 })();
 
@@ -100,16 +109,25 @@ const logicController = (() => {
         let selectedLandUseObject = landUseDefinitions[landUseDefinitions.map(function (item) { return item.subLandUse; }).indexOf(selectedSubLandUse)];
         let selectedQuantumType = selectedLandUseObject.quantumType;
 
+        //set the 'Quantum Type' cell based on the selected sub-class
         quantumTypeElement.textContent = selectedQuantumType;
-        console.log(selectedQuantumType)
     };
 
+    //calculate the required number of short-stay cycle parking spaces, based on the input quantum and selections
     const calculateShortStayParking = () => {
+        let selectedSubLandUse = subLandUseClassSel.options[subLandUseClassSel.selectedIndex].text;
+        let higherStandardsSelection = document.querySelector('input[name="choice-radio"]:checked').value;        ;
+
         let roundedShortStayParking = 'Enter quantum';
+        let result = shortStayParkingStandards.find(x => x.subLandUse === selectedSubLandUse && x.higherStandards === false)
+
+
+
         return roundedShortStayParking;
 
     };
 
+    //calculate the required number of long-stay cycle parking spaces, based on the input quantum and selections
     const calculateLongStayParking = () => {
         let roundedLongStayParking = 'Enter quantum';
 
@@ -140,6 +158,4 @@ const logicController = (() => {
     };    
 })();
 
-logicController.calculateShortStayParking();
-logicController.calculateLongStayParking();
 logicController.updateOutput();
