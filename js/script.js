@@ -24,11 +24,11 @@ const landUseDefinitions = [
 ]
 
 const shortStayParkingStandards = [
-    {subLandUse:'food retail above 100sqm', higherStandards:true, Boundary1:750, Ratio1:20, Boundary2:Infinity, Ratio2:150},
-    {subLandUse:'food retail above 100sqm', higherStandards:false, Boundary1:750, Ratio1:40, Boundary2:Infinity, Ratio2:300},
+    {subLandUse:'food retail above 100sqm', higherStandards:true, lowerBoundary:750, lowerRatio:20, upperRatio:150},
+    {subLandUse:'food retail above 100sqm', higherStandards:false, lowerBoundary:750, lowerRatio:40, upperRatio:300},
 
-    {subLandUse:'non-food retail above 100sqm', higherStandards:true, Boundary1:1000, Ratio1:60, Boundary2:Infinity, Ratio2:500},
-    {subLandUse:'non-food retail above 100sqm', higherStandards:false, Boundary1:1000, Ratio1:125, Boundary2:Infinity, Ratio2:1000},
+    {subLandUse:'non-food retail above 100sqm', higherStandards:true, lowerBoundary:1000, lowerRatio:60, upperRatio:500},
+    {subLandUse:'non-food retail above 100sqm', higherStandards:false, lowerBoundary:1000, lowerRatio:125, upperRatio:1000},
  ]
 
 //create a display controller function
@@ -86,13 +86,11 @@ const displayController = (() => {
             landUseSubClassCell.textContent = '';
 
         } else if (landUseClassSelection === 'Select Class' && subLandUseClassSelection !== 'Select Sub-Class') {
-            console.log('test1')
             resetForm();
             return;
 
         } else if (landUseClassSelection !== 'Select Class' && subLandUseClassSelection === 'Select Sub-Class') {
             subLandUseClassSel.selectedIndex = 0;
-            console.log('test2')
 
         } else {
             landUseClassCell.textContent = landUseClassSelection;
@@ -101,10 +99,6 @@ const displayController = (() => {
             logicController.calculateShortStayParking();
         };
     };
-
-    landUseClassSel.addEventListener('change',fillSubDropdowns);
-    landUseClassSel.addEventListener('change',fillCalculatorCells);
-    subLandUseClassSel.addEventListener('change',fillCalculatorCells);
     
     return {   
         fillDropdowns,
@@ -114,14 +108,10 @@ const displayController = (() => {
     };    
 })();
 
-displayController.fillDropdowns();
-displayController.fillCalculatorCells();
-
 //define logic controller for calculator
 const logicController = (() => {
     let quantumTypeElement = document.getElementById('quantumType');
     let inputQuantum = document.getElementById('quantumInput').value;
-
     //create a function to populate and link the cascading dropdowns
     const setQuantumType = () => {
         let selectedSubLandUse = subLandUseClassSel.options[subLandUseClassSel.selectedIndex].text;
@@ -135,15 +125,16 @@ const logicController = (() => {
     //calculate the required number of short-stay cycle parking spaces, based on the input quantum and selections
     const calculateShortStayParking = () => {
         let selectedSubLandUse = subLandUseClassSel.options[subLandUseClassSel.selectedIndex].text;
-        let higherStandardsSelection = document.querySelector('input[name="choice-radio"]:checked').value;        ;
-        console.log(higherStandardsSelection)
-        let roundedShortStayParking = 'Enter quantum';
-        let parkingStandardsResult = shortStayParkingStandards.find(x => x.subLandUse === selectedSubLandUse && x.higherStandards == higherStandardsSelection)
+        let roundedShortStayParking = 0;
+        let higherStandardsOption = document.querySelector('input[name="choice-radio"]:checked').value;
+        let parkingStandardsResult = shortStayParkingStandards.find(x => x.subLandUse === selectedSubLandUse && x.higherStandards == higherStandardsOption)
 
         //if statement to determine required number of parking spaces
-        
-
-        return roundedShortStayParking;
+        //if select class/sub-class is chosen, do nothing
+        //else calculate the required parking
+        //if boundary2 does not exist, just use ratio 1
+        //else calculate ratio1 for 0<x<boundary1, and ratio2 for x>boundary1
+        return parkingStandardsResult.lowerRatio;
 
     };
 
@@ -171,5 +162,20 @@ const logicController = (() => {
         updateOutput
     };    
 })();
+
+
+//add event listeners
+landUseClassSel.addEventListener('change',displayController.fillSubDropdowns);
+landUseClassSel.addEventListener('change',displayController.fillCalculatorCells);
+subLandUseClassSel.addEventListener('change',displayController.fillCalculatorCells);
+landUseClassSel.addEventListener('change',logicController.updateOutput);
+subLandUseClassSel.addEventListener('change',logicController.updateOutput);
+
+var radios = document.querySelectorAll('input[type=radio][name="choice-radio"]');
+radios.forEach(radio => radio.addEventListener('change', () => logicController.updateOutput()));
+
+//initial fill of dropdowns and table
+displayController.fillDropdowns();
+displayController.fillCalculatorCells();
 
 logicController.updateOutput();
