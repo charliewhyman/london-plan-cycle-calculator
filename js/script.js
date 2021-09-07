@@ -12,11 +12,11 @@ const landUseDefinitions = [
    {landUse:'C2', subLandUse:'hospitals', quantumType:'FTE staff'},
    {landUse:'C2', subLandUse:'care homes / secure accommodation', quantumType:'FTE staff'},
    {landUse:'C3-C4', subLandUse:'dwellings (all)', quantumType:'dwellings'},
-   {landUse:'D1', subLandUse:'nurseries', quantumType:'FTE staff'},
-   {landUse:'D1', subLandUse:'primary schools / secondary schools/ sixth form colleges', quantumType:'FTE staff'},
-   {landUse:'D1', subLandUse:'universities and colleges', quantumType:'FTE staff'},
+   {landUse:'D1', subLandUse:'nurseries', quantumType:'FTE staff/students'},
+   {landUse:'D1', subLandUse:'primary schools / secondary schools/ sixth form colleges', quantumType:'FTE staff/students'},
+   {landUse:'D1', subLandUse:'universities and colleges', quantumType:'FTE staff/students'},
    {landUse:'D1', subLandUse:'health centre, including dentists', quantumType:'FTE staff'},
-   {landUse:'D1', subLandUse:'health centre, including dentists', quantumType:'FTE staff'},
+   {landUse:'D1', subLandUse:'other (e.g. library, church, etc.)', quantumType:'FTE staff'},
    {landUse:'D2', subLandUse:'sports (e.g. sports hall, swimming, gymnasium, etc.)', quantumType:'FTE staff'},
    {landUse:'D2', subLandUse:'other (e.g. cinema, bingo, etc.)', quantumType:'FTE staff'},
    {landUse:'Other', subLandUse:'Student accomodation', quantumType:'bedrooms'},
@@ -24,17 +24,91 @@ const landUseDefinitions = [
 ]
 
 const shortStayParkingStandards = [
-    {subLandUse:'food retail above 100sqm', higherStandards:true, lowerBoundary:750, lowerRatio:20, upperRatio:150},
-    {subLandUse:'food retail above 100sqm', higherStandards:false, lowerBoundary:750, lowerRatio:40, upperRatio:300},
+    {subLandUse:'food retail above 100sqm', higherStandards:true, boundary:750, lowerRatio:20, upperRatio:150},
+    {subLandUse:'food retail above 100sqm', higherStandards:false, boundary:750, lowerRatio:40, upperRatio:300},
 
-    {subLandUse:'non-food retail above 100sqm', higherStandards:true, lowerBoundary:1000, lowerRatio:60, upperRatio:500},
-    {subLandUse:'non-food retail above 100sqm', higherStandards:false, lowerBoundary:1000, lowerRatio:125, upperRatio:1000},
+    {subLandUse:'non-food retail above 100sqm', higherStandards:true, boundary:1000, lowerRatio:60, upperRatio:500},
+    {subLandUse:'non-food retail above 100sqm', higherStandards:false, boundary:1000, lowerRatio:125, upperRatio:1000},
+
+    {subLandUse:'financial / professional services; cafes & restaurants; drinking establishments; take-aways above 100 sqm', higherStandards:true, boundary:0, lowerRatio:20, upperRatio:20},
+    {subLandUse:'financial / professional services; cafes & restaurants; drinking establishments; take-aways above 100 sqm', higherStandards:false, boundary:0, lowerRatio:40, upperRatio:40},
+
+    {subLandUse:'business offices', boundary:5000, lowerRatio:500, upperRatio:5000},
+
+    {subLandUse:'light industry and research and development', boundary:0, lowerRatio:1000, upperRatio:1000},
+
+    {subLandUse:'general industrial, storage or distribution', boundary:0, lowerRatio:1000, upperRatio:1000},
+
+    {subLandUse:'hotels', boundary:0, lowerRatio:50, upperRatio:50},
+
+    {subLandUse:'hospitals', boundary:0, lowerRatio:30, upperRatio:30},
+
+    {subLandUse:'care homes / secure accommodation', boundary:0, lowerRatio:20, upperRatio:20},
+
+    {subLandUse:'dwellings (all)', higherStandards:true, boundary:40, lowerRatio:2, upperRatio:1},
+    {subLandUse:'dwellings (all)', higherStandards:false, boundary:40, lowerRatio:2, upperRatio:1},
+
+    {subLandUse:'nurseries', boundary:0, lowerRatio:8, upperRatio:8, secondaryQuantumType:'Students', secondaryRatio:8},
+
+    {subLandUse:'primary schools / secondary schools/ sixth form colleges', boundary:0, lowerRatio:100, upperRatio:100},
+
+    {subLandUse:'universities and colleges', boundary:0, lowerRatio:7, upperRatio:7},
+
+    {subLandUse:'health centre, including dentists', boundary:0, lowerRatio:3, upperRatio:3},
+
+    {subLandUse:'sports (e.g. sports hall, swimming, gymnasium, etc.)', boundary:0, lowerRatio:100, upperRatio:100},
+
+    {subLandUse:'other (e.g. cinema, bingo, etc.)', boundary:0, lowerRatio:30, upperRatio:30},
+
+    {subLandUse:'Student accomodation', boundary:0, lowerRatio:40, upperRatio:40},
+
+    {subLandUse:'Older persons housing', boundary:0, lowerRatio:40, upperRatio:40},
+ ]
+
+ const longStayParkingStandards = [
+    {subLandUse:'food retail above 100sqm', boundary:0, lowerRatio:175, upperRatio:175},
+
+    {subLandUse:'non-food retail above 100sqm', boundary:1000, lowerRatio:250, upperRatio:1000},
+
+    {subLandUse:'financial / professional services; cafes & restaurants; drinking establishments; take-aways above 100 sqm', boundary:0, lowerRatio:175, upperRatio:175},
+
+    {subLandUse:'business offices', higherStandards:true, boundary:0, lowerRatio:75, upperRatio:75},
+    {subLandUse:'business offices', higherStandards:false, boundary:0, lowerRatio:150, upperRatio:150},
+
+    {subLandUse:'light industry and research and development', boundary:0, lowerRatio:250, upperRatio:250},
+
+    {subLandUse:'general industrial, storage or distribution', boundary:0, lowerRatio:500, upperRatio:500},
+
+    {subLandUse:'hotels', boundary:0, lowerRatio:20, upperRatio:20},
+
+    {subLandUse:'hospitals', boundary:0, lowerRatio:5, upperRatio:5},
+
+    {subLandUse:'care homes / secure accommodation', boundary:0, lowerRatio:5, upperRatio:5},
+
+    {subLandUse:'dwellings (all)', onePersonOneBedroomRatio:1, twoPersonOneBedroomRatio:1.5, twoBedroomsPlusRatio:2},
+
+    {subLandUse:'nurseries', boundary:0, lowerRatio:8, upperRatio:8, secondaryQuantumType:'Students', secondaryRatio:8},
+
+    {subLandUse:'primary schools / secondary schools/ sixth form colleges', boundary:0, lowerRatio:8, upperRatio:8, secondaryQuantumType:'Students', secondaryRatio:8},
+
+    {subLandUse:'universities and colleges', boundary:0, lowerRatio:4, upperRatio:4, secondaryQuantumType:'Students', secondaryRatio:20},
+
+    {subLandUse:'health centre, including dentists', boundary:0, lowerRatio:5, upperRatio:5},
+
+    {subLandUse:'sports (e.g. sports hall, swimming, gymnasium, etc.)', boundary:0, lowerRatio:8, upperRatio:8},
+
+    {subLandUse:'other (e.g. cinema, bingo, etc.)', boundary:0, lowerRatio:8, upperRatio:8},
+
+    {subLandUse:'Student accomodation', boundary:0, lowerRatio:0.75, upperRatio:0.75},
+
+    {subLandUse:'Older persons housing', boundary:0, lowerRatio:10, upperRatio:10},
  ]
 
 //create a display controller function
 const displayController = (() => {
     let landUseClassSel = document.getElementById('landUseClassSel');
     let subLandUseClassSel = document.getElementById('subLandUseClassSel');
+    let calculateButton = document.getElementById('calculateButton');
     //create a function to populate and link the cascading dropdowns
     const fillDropdowns = () => {
         let landUseArray = landUseDefinitions.map(object => object.landUse);
@@ -99,7 +173,7 @@ const displayController = (() => {
             logicController.calculateShortStayParking();
         };
     };
-    
+
     return {   
         fillDropdowns,
         fillSubDropdowns,
@@ -111,7 +185,6 @@ const displayController = (() => {
 //define logic controller for calculator
 const logicController = (() => {
     let quantumTypeElement = document.getElementById('quantumType');
-    let inputQuantum = document.getElementById('quantumInput').value;
     //create a function to populate and link the cascading dropdowns
     const setQuantumType = () => {
         let selectedSubLandUse = subLandUseClassSel.options[subLandUseClassSel.selectedIndex].text;
@@ -122,25 +195,75 @@ const logicController = (() => {
         quantumTypeElement.textContent = selectedQuantumType;
     };
 
+    const toggleSecondaryOutputs = () => {
+        let secondaryOutputs = document.getElementsByClassName('secondaryOutput');
+
+        for(let i = 0; i < secondaryOutputs.length; i++) {
+            
+            if (secondaryOutputs[i].style.display === 'none') {
+                console.log('1')
+                secondaryOutputs[i].style.display = 'block';
+            } else {
+                console.log('2')
+                secondaryOutputs[i].style.display = 'none';
+            }
+        };
+    };
+
     //calculate the required number of short-stay cycle parking spaces, based on the input quantum and selections
     const calculateShortStayParking = () => {
+        let inputQuantum = document.getElementById('quantumInput').value;
         let selectedSubLandUse = subLandUseClassSel.options[subLandUseClassSel.selectedIndex].text;
         let roundedShortStayParking = 0;
         let higherStandardsOption = document.querySelector('input[name="choice-radio"]:checked').value;
-        let parkingStandardsResult = shortStayParkingStandards.find(x => x.subLandUse === selectedSubLandUse && x.higherStandards == higherStandardsOption)
+        let parkingStandardsResult = {};
+        
+        //if statement to look up the corresponding parking ratio for the selected sub land use
+        if (shortStayParkingStandards.find(x => x.subLandUse === selectedSubLandUse && !('higherStandards' in x))) {
+            parkingStandardsResult = shortStayParkingStandards.find(x => x.subLandUse === selectedSubLandUse && !('higherStandards' in x));
+        } else if (shortStayParkingStandards.find(x => x.subLandUse === selectedSubLandUse && x.higherStandards == higherStandardsOption)) {
+            parkingStandardsResult =shortStayParkingStandards.find(x => x.subLandUse === selectedSubLandUse && x.higherStandards == higherStandardsOption);
+        };
 
-        //if statement to determine required number of parking spaces
-        //if select class/sub-class is chosen, do nothing
-        //else calculate the required parking
-        //if boundary2 does not exist, just use ratio 1
-        //else calculate ratio1 for 0<x<boundary1, and ratio2 for x>boundary1
-        return parkingStandardsResult.lowerRatio;
+        // if statement to return the rounded number of parking spaces, if a sub class is selected and a quantum input
+        if (selectedSubLandUse === 'Select Sub-Class') {
+            roundedShortStayParking = 'Select Sub-Class'
+        } else if (inputQuantum <= 0) {
+            roundedShortStayParking = 'Enter Quantum'
+        } else {
+            inputQuantum = parseInt(inputQuantum,10)
+            roundedShortStayParking = Math.round((parkingStandardsResult.boundary/parkingStandardsResult.lowerRatio)+(inputQuantum-parkingStandardsResult.boundary)/parkingStandardsResult.upperRatio);
+        };
 
+        return roundedShortStayParking;
     };
 
     //calculate the required number of long-stay cycle parking spaces, based on the input quantum and selections
     const calculateLongStayParking = () => {
+        let inputQuantum = document.getElementById('quantumInput').value;
+        let selectedSubLandUse = subLandUseClassSel.options[subLandUseClassSel.selectedIndex].text;
+        let roundedLongStayParking = 0;
+        let higherStandardsOption = document.querySelector('input[name="choice-radio"]:checked').value;
+        let parkingStandardsResult = {};
         
+        //if statement to look up the corresponding parking ratio for the selected sub land use
+        if (longStayParkingStandards.find(x => x.subLandUse === selectedSubLandUse && !('higherStandards' in x))) {
+            parkingStandardsResult = longStayParkingStandards.find(x => x.subLandUse === selectedSubLandUse && !('higherStandards' in x));
+        } else if (longStayParkingStandards.find(x => x.subLandUse === selectedSubLandUse && x.higherStandards == higherStandardsOption)) {
+            parkingStandardsResult =longStayParkingStandards.find(x => x.subLandUse === selectedSubLandUse && x.higherStandards == higherStandardsOption);
+        };
+
+        // if statement to return the rounded number of parking spaces, if a sub class is selected and a quantum input
+        if (selectedSubLandUse === 'Select Sub-Class') {
+            roundedLongStayParking = 'Select Sub-Class'
+        } else if (inputQuantum <= 0) {
+            roundedLongStayParking = 'Enter Quantum'
+        } else {
+            inputQuantum = parseInt(inputQuantum,10)
+            roundedLongStayParking = Math.round((parkingStandardsResult.boundary/parkingStandardsResult.lowerRatio)+(inputQuantum-parkingStandardsResult.boundary)/parkingStandardsResult.upperRatio);
+        };
+
+        return roundedLongStayParking;
     };
 
     const updateOutput = () => {
@@ -157,12 +280,12 @@ const logicController = (() => {
     
     return {   
         setQuantumType,
+        toggleSecondaryOutputs,
         calculateShortStayParking,
         calculateLongStayParking,
         updateOutput
     };    
 })();
-
 
 //add event listeners
 landUseClassSel.addEventListener('change',displayController.fillSubDropdowns);
@@ -170,6 +293,8 @@ landUseClassSel.addEventListener('change',displayController.fillCalculatorCells)
 subLandUseClassSel.addEventListener('change',displayController.fillCalculatorCells);
 landUseClassSel.addEventListener('change',logicController.updateOutput);
 subLandUseClassSel.addEventListener('change',logicController.updateOutput);
+calculateButton.addEventListener('click',logicController.updateOutput);
+
 
 var radios = document.querySelectorAll('input[type=radio][name="choice-radio"]');
 radios.forEach(radio => radio.addEventListener('change', () => logicController.updateOutput()));

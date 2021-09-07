@@ -42,7 +42,7 @@
                     No
                   </label>
               </form>
-              <div class='container' id='calculatorTableContainer'>
+            <div class='container' id='calculatorTableContainer'>
                 <table id='calculator'>
                     <tbody>
                         <tr>
@@ -72,12 +72,17 @@
                         </tr>
                             </tbody>
                 </table>
-                <input id='shortStayParkingOutput' type='text'/>
-                <label for='shortStayParkingOutput'>Required short-stay cycle parking</label>
-                <input id='longStayParkingOutput' type='text'/>
-                <label for='longStayParkingOutput'>Required long-stay cycle parking</label>
             </div>
         </div>
+        <div id='output'>
+            <input class='primaryOutput' id='shortStayParkingOutput' type='text'/>
+            <input class='secondaryOutput' id='shortStayParkingSecondaryOutput' type='text'/>
+            <label for='shortStayParkingOutput'>Required short-stay cycle parking</label>
+            <input class='primaryOutput' id='longStayParkingOutput' type='text'/>
+            <input class='secondaryOutput' id='longStayParkingSecondaryOutput' type='text'/>
+            <label for='longStayParkingOutput'>Required long-stay cycle parking</label>
+        </div>
+        <button id='calculateButton'>Calculate</button>
     </body>
         <div class='container' id='standardsContainer'>
             <p>Table 10.2 of the London Plan 2021</p>

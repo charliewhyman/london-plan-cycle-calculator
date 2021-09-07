@@ -37,3 +37,14 @@ tr {
 li {
   text-align: left;
 }
+
+#output {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-items: center;
+}
+
+.secondaryOutput {
+  display: none;
+}
