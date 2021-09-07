@@ -45,8 +45,8 @@ const shortStayParkingStandards = [
 
     {subLandUse:'care homes / secure accommodation', boundary:0, lowerRatio:20, upperRatio:20},
 
-    {subLandUse:'dwellings (all)', higherStandards:true, boundary:40, lowerRatio:2, upperRatio:1},
-    {subLandUse:'dwellings (all)', higherStandards:false, boundary:40, lowerRatio:2, upperRatio:1},
+    {subLandUse:'dwellings (all)', higherStandards:true, lowerBoundary:5, upperBoundary:40, lowerSpaces:2, upperRatio:40},
+    {subLandUse:'dwellings (all)', higherStandards:false, lowerBoundary:5, upperBoundary:40, lowerSpaces:2, upperRatio:40},
 
     {subLandUse:'nurseries', boundary:0, lowerRatio:8, upperRatio:8, secondaryQuantumType:'Students', secondaryRatio:8},
 
@@ -55,6 +55,8 @@ const shortStayParkingStandards = [
     {subLandUse:'universities and colleges', boundary:0, lowerRatio:7, upperRatio:7},
 
     {subLandUse:'health centre, including dentists', boundary:0, lowerRatio:3, upperRatio:3},
+
+    {subLandUse:'other (e.g. library, church, etc.)', boundary:0, lowerRatio:100, upperRatio:100},
 
     {subLandUse:'sports (e.g. sports hall, swimming, gymnasium, etc.)', boundary:0, lowerRatio:100, upperRatio:100},
 
@@ -225,14 +227,41 @@ const logicController = (() => {
             parkingStandardsResult =shortStayParkingStandards.find(x => x.subLandUse === selectedSubLandUse && x.higherStandards == higherStandardsOption);
         };
 
-        // if statement to return the rounded number of parking spaces, if a sub class is selected and a quantum input
+        // if statement to return the rounded number of parking spaces
+        
+        //return a message if no sub class is selected or no quantum input
         if (selectedSubLandUse === 'Select Sub-Class') {
             roundedShortStayParking = 'Select Sub-Class'
         } else if (inputQuantum <= 0) {
             roundedShortStayParking = 'Enter Quantum'
+
+        //handle dwellings case- "5 to 40 dwellings: 2 spaces, Thereafter: 1 space per 40 dwellings"
+        } else if (selectedSubLandUse === 'dwellings (all)' && inputQuantum < parkingStandardsResult.lowerBoundary) {
+            roundedShortStayParking = 0;
+        } else if (selectedSubLandUse === 'dwellings (all)' && inputQuantum <= parkingStandardsResult.upperBoundary) {
+            roundedShortStayParking = parkingStandardsResult.lowerSpaces;
+        } else if (selectedSubLandUse === 'dwellings (all)') {
+            roundedShortStayParking = parkingStandardsResult.lowerSpaces + (inputQuantum - parkingStandardsResult.upperBoundary)/(parkingStandardsResult.upperRatio);
+            roundedShortStayParking = Math.ceil(roundedShortStayParking);
+
+        //handle all other cases
+        } else if (inputQuantum > parkingStandardsResult.boundary) {
+            inputQuantum = parseInt(inputQuantum,10);
+            //calculate the portion up to the boundary
+            roundedShortStayParking +=(parkingStandardsResult.boundary)/(parkingStandardsResult.lowerRatio);
+
+            //calculate the remaining portion of the quantum
+            let remainder = inputQuantum - parkingStandardsResult.boundary;
+            roundedShortStayParking += (remainder)/(parkingStandardsResult.upperRatio);
+
+            //round up
+            roundedShortStayParking = Math.ceil(roundedShortStayParking);
+
         } else {
-            inputQuantum = parseInt(inputQuantum,10)
-            roundedShortStayParking = Math.round((parkingStandardsResult.boundary/parkingStandardsResult.lowerRatio)+(inputQuantum-parkingStandardsResult.boundary)/parkingStandardsResult.upperRatio);
+            inputQuantum = parseInt(inputQuantum,10);
+
+            roundedShortStayParking = (inputQuantum)/(parkingStandardsResult.lowerRatio);
+            roundedShortStayParking = Math.ceil(roundedShortStayParking);
         };
 
         return roundedShortStayParking;
@@ -295,7 +324,7 @@ landUseClassSel.addEventListener('change',logicController.updateOutput);
 subLandUseClassSel.addEventListener('change',logicController.updateOutput);
 calculateButton.addEventListener('click',logicController.updateOutput);
 
-
+//add event listeners for the 'higher standards' radio buttons
 var radios = document.querySelectorAll('input[type=radio][name="choice-radio"]');
 radios.forEach(radio => radio.addEventListener('change', () => logicController.updateOutput()));
 
