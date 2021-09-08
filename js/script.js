@@ -111,6 +111,14 @@ const displayController = (() => {
     let landUseClassSel = document.getElementById('landUseClassSel');
     let subLandUseClassSel = document.getElementById('subLandUseClassSel');
     let calculateButton = document.getElementById('calculateButton');
+    var outputElements = document.getElementsByClassName('longStayOutput');
+    let calculatorTable = document.getElementById('calculatorTable');
+    let primaryQuantumTypeElement = document.getElementById('quantumType');
+
+
+    //save the initial state of the table
+    var originalHTML = calculatorTable.innerHTML;
+
     //create a function to populate and link the cascading dropdowns
     const fillDropdowns = () => {
         let landUseArray = landUseDefinitions.map(object => object.landUse);
@@ -142,22 +150,61 @@ const displayController = (() => {
         
     };
 
-    const resetForm = () => {
-        landUseClassSel.selectedIndex = 0;
-        subLandUseClassSel.selectedIndex = 0;
-        landUseClassCell.textContent = '';
-        landUseSubClassCell.textContent = '';
-        let quantumTypeElement = document.getElementById('quantumType');
-        quantumTypeElement.textContent = '';
+
+    //define a function to create new rows in the calculator table, including an offset parameter to account for merged cells
+    const generateTableCells = (numCells, offset) => {
+        let landUseTBody = calculatorTable.getElementsByTagName('tbody')[0];
+
+        let numNewRows = numCells;
+        let numColumns = calculatorTable.rows[0].cells.length;
+        for (let index = 0; index < numNewRows -1; index++) {
+            var row = landUseTBody.insertRow(-1);
+            for (let index = 1; index < numColumns - offset; index++) {
+                var cell = row.insertCell(-1);
+                cell.id = index;
+            };
+        };
+    };
+
+    const addStudentsRow = () => {
+        let landUseClassSelection = landUseClassSel.options[landUseClassSel.selectedIndex].text;
+        let landUseClassCell = document.getElementById('landUseClassCell');
+        let subLandUseClassSelection = subLandUseClassSel.options[subLandUseClassSel.selectedIndex].text;
+        let landUseSubClassCell = document.getElementById('landUseSubClassCell');
+        
+        generateTableCells(2,1);
+
+         //merge the Use Class and Sub-Class cells
+         calculatorTable.rows[1].cells[0].rowSpan = 2;
+         calculatorTable.rows[1].cells[1].rowSpan = 2;
+
+         //set Use Class and Land Use class text
+         landUseClassCell.textContent = landUseClassSelection;
+         landUseSubClassCell.textContent = subLandUseClassSelection;
+
+        let studentInput = document.createElement("INPUT");
+        studentInput.setAttribute('type', 'number');
+        studentInput.id = 'studentInput';
+        calculatorTable.rows[2].cells[0].appendChild(studentInput);
+        
+        calculatorTable.rows[1].cells[3].textContent = 'FTE Staff';
+        calculatorTable.rows[2].cells[1].textContent = 'Students';
     };
 
     const fillCalculatorCells = () => {
         let landUseClassSelection = landUseClassSel.options[landUseClassSel.selectedIndex].text;
-        let calculatorTable = document.getElementById('calculatorTable');
-        let landUseTBody = calculatorTable.getElementsByTagName('tbody')[0];
         let landUseClassCell = document.getElementById('landUseClassCell');
         let subLandUseClassSelection = subLandUseClassSel.options[subLandUseClassSel.selectedIndex].text;
         let landUseSubClassCell = document.getElementById('landUseSubClassCell');
+
+        // reset the table to initial state
+        calculatorTable.innerHTML = originalHTML;
+
+        //show all output boxes to start
+        for(var i = 0; i < outputElements.length; i++){
+            var a = outputElements[i];
+            a.style.display = 'inline-block';
+        };   
 
         if (landUseClassSelection == 'Select Class' && subLandUseClassSelection == 'Select Sub-Class') {
             landUseClassCell.textContent = '';
@@ -172,15 +219,7 @@ const displayController = (() => {
 
         } else if (subLandUseClassSelection == 'dwellings (all)')  {
             //insert extra rows for bedrooms input
-            let numNewRows = 3;
-            let numColumns = calculatorTable.rows[0].cells.length;
-            for (let index = 0; index < numNewRows -1; index++) {
-                var row = landUseTBody.insertRow(-1);
-                for (let index = 1; index < numColumns -1; index++) {
-                    var cell = row.insertCell(-1);
-                    cell.id = index;
-                };
-            };
+            generateTableCells(3,1);
 
             //merge the Use Class and Sub-Class cells
             calculatorTable.rows[1].cells[0].rowSpan = 3;
@@ -190,12 +229,12 @@ const displayController = (() => {
             let newInputOne = document.createElement("INPUT");
             newInputOne.setAttribute('type', 'number');
             newInputOne.id = 'quantumInputTwo';
-            let InputCellOne = calculatorTable.rows[2].cells[0].appendChild(newInputOne);
+            calculatorTable.rows[2].cells[0].appendChild(newInputOne);
 
             let newInputTwo = document.createElement("INPUT");
             newInputTwo.setAttribute('type', 'number');
             newInputTwo.id = 'quantumInputThree';
-            let InputCellTwo = calculatorTable.rows[3].cells[0].appendChild(newInputTwo);
+            calculatorTable.rows[3].cells[0].appendChild(newInputTwo);
 
             //set Use Class and Land Use class text
             landUseClassCell.textContent = landUseClassSelection;
@@ -208,54 +247,79 @@ const displayController = (() => {
             //calculate required parking
             logicController.calculateShortStayParking();
             logicController.calculateLongStayParking();
+
+
+        //separate if statement for nurseries, as they use a different requirement (1 space per 8 FTE staff + 1 space per 8 students)
+        } else if (subLandUseClassSelection == 'nurseries') { 
+            addStudentsRow();
+            //Hide one of the input boxes, as the requirement does not correspond to short- or long- stay parking
+            for(var i = 0; i < outputElements.length; i++){
+                var a = outputElements[i];
+                a.style.display = 'none';
+            };
+
+            let shortStayOutputLabel = document.getElementById('shortStayOutputLabel');
+            shortStayOutputLabel.textContent = 'Total spaces';
+            //calculate required parking
+            logicController.calculateShortStayParking();
+            logicController.calculateLongStayParking();
+        } else if (subLandUseClassSelection == 'primary schools / secondary schools/ sixth form colleges' || 'universities and colleges') {
+            addStudentsRow();
+            //set the Quantum Type cell text
+            displayController.setQuantumType();
+            //calculate required parking
+            logicController.calculateShortStayParking();
+            logicController.calculateLongStayParking();
         } else {
 
             //set Use Class and Land Use class text
             landUseClassCell.textContent = landUseClassSelection;
             landUseSubClassCell.textContent = subLandUseClassSelection;
             //set the Quantum Type cell text
-            logicController.setQuantumType();
+            displayController.setQuantumType();
             //calculate required parking
             logicController.calculateShortStayParking();
             logicController.calculateLongStayParking();
         };
     };
+    
 
-    return {   
-        fillDropdowns,
-        fillSubDropdowns,
-        resetForm,
-        fillCalculatorCells,
-    };    
-})();
-
-//define logic controller for calculator
-const logicController = (() => {
-    let quantumTypeElement = document.getElementById('quantumType');
-    //create a function to populate and link the cascading dropdowns
+    //define a function to set the 'quantum type' cell based on the selected sub-class
     const setQuantumType = () => {
         let selectedSubLandUse = subLandUseClassSel.options[subLandUseClassSel.selectedIndex].text;
         let selectedLandUseObject = landUseDefinitions[landUseDefinitions.map(function (item) { return item.subLandUse; }).indexOf(selectedSubLandUse)];
         let selectedQuantumType = selectedLandUseObject.quantumType;
 
         //set the 'Quantum Type' cell based on the selected sub-class
-        quantumTypeElement.textContent = selectedQuantumType;
+        //if nursery, school or university sub-classes are selected, set the primary and secondary quantum types
+        
+        primaryQuantumTypeElement.textContent = selectedQuantumType;
     };
 
-    const toggleSecondaryOutputs = () => {
-        let secondaryOutputs = document.getElementsByClassName('secondaryOutput');
+    const resetForm = () => {
+        landUseClassSel.selectedIndex = 0;
+        subLandUseClassSel.selectedIndex = 0;
+        landUseClassCell.textContent = '';
+        landUseSubClassCell.textContent = '';
+        primaryQuantumTypeElement.textContent = '';
 
-        for(let i = 0; i < secondaryOutputs.length; i++) {
-            
-            if (secondaryOutputs[i].style.display === 'none') {
-                console.log('1')
-                secondaryOutputs[i].style.display = 'block';
-            } else {
-                console.log('2')
-                secondaryOutputs[i].style.display = 'none';
-            }
-        };
     };
+
+    return {  
+        fillDropdowns,
+        fillSubDropdowns,
+        addStudentsRow,
+        generateTableCells,
+        fillCalculatorCells,
+        setQuantumType,
+        resetForm,
+    };    
+})();
+
+//define logic controller for calculator
+const logicController = (() => {
+    //create a function to populate and link the cascading dropdowns
+   
 
     //calculate the required number of short-stay cycle parking spaces, based on the input quantum and selections
     const calculateShortStayParking = () => {
@@ -289,7 +353,9 @@ const logicController = (() => {
             roundedShortStayParking = parkingStandardsResult.lowerSpaces + (inputQuantum - parkingStandardsResult.upperBoundary)/(parkingStandardsResult.upperRatio);
             roundedShortStayParking = Math.ceil(roundedShortStayParking);
 
-        //handle all other cases
+        
+        
+            //handle all other cases
         } else if (inputQuantum > parkingStandardsResult.boundary) {
             inputQuantum = parseInt(inputQuantum,10);
             //calculate the portion up to the boundary
@@ -336,7 +402,6 @@ const logicController = (() => {
             roundedLongStayParking = 'Enter Quantum'
 
         //handle dwellings case- "• 1 space per studio or 1 person 1 bedroom dwelling, 1.5 spaces per 2 person 1 bedroom dwelling, 2 spaces per all other dwellings"
-        //XXXXJSDFJDFIDFDOSFOSFDSOFDSFDFNF
         } else if (selectedSubLandUse === 'dwellings (all)' && inputQuantum < parkingStandardsResult.lowerBoundary) {
             roundedLongStayParking = 0;
         } else if (selectedSubLandUse === 'dwellings (all)' && inputQuantum <= parkingStandardsResult.upperBoundary) {
@@ -381,8 +446,6 @@ const logicController = (() => {
     };
     
     return {   
-        setQuantumType,
-        toggleSecondaryOutputs,
         calculateShortStayParking,
         calculateLongStayParking,
         updateOutput
