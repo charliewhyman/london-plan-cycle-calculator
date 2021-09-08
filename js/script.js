@@ -153,6 +153,8 @@ const displayController = (() => {
 
     const fillCalculatorCells = () => {
         let landUseClassSelection = landUseClassSel.options[landUseClassSel.selectedIndex].text;
+        let calculatorTable = document.getElementById('calculatorTable');
+        let landUseTBody = calculatorTable.getElementsByTagName('tbody')[0];
         let landUseClassCell = document.getElementById('landUseClassCell');
         let subLandUseClassSelection = subLandUseClassSel.options[subLandUseClassSel.selectedIndex].text;
         let landUseSubClassCell = document.getElementById('landUseSubClassCell');
@@ -168,11 +170,54 @@ const displayController = (() => {
         } else if (landUseClassSelection !== 'Select Class' && subLandUseClassSelection === 'Select Sub-Class') {
             subLandUseClassSel.selectedIndex = 0;
 
-        } else {
+        } else if (subLandUseClassSelection == 'dwellings (all)')  {
+            //insert extra rows for bedrooms input
+            let numNewRows = 3;
+            let numColumns = calculatorTable.rows[0].cells.length;
+            for (let index = 0; index < numNewRows -1; index++) {
+                var row = landUseTBody.insertRow(-1);
+                for (let index = 1; index < numColumns -1; index++) {
+                    var cell = row.insertCell(-1);
+                    cell.id = index;
+                };
+            };
+
+            //merge the Use Class and Sub-Class cells
+            calculatorTable.rows[1].cells[0].rowSpan = 3;
+            calculatorTable.rows[1].cells[1].rowSpan = 3;
+
+            //add quantum inputs in new rows
+            let newInputOne = document.createElement("INPUT");
+            newInputOne.setAttribute('type', 'number');
+            newInputOne.id = 'quantumInputTwo';
+            let InputCellOne = calculatorTable.rows[2].cells[0].appendChild(newInputOne);
+
+            let newInputTwo = document.createElement("INPUT");
+            newInputTwo.setAttribute('type', 'number');
+            newInputTwo.id = 'quantumInputThree';
+            let InputCellTwo = calculatorTable.rows[3].cells[0].appendChild(newInputTwo);
+
+            //set Use Class and Land Use class text
             landUseClassCell.textContent = landUseClassSelection;
             landUseSubClassCell.textContent = subLandUseClassSelection;
-            logicController.setQuantumType();
+            //set the Quantum Type cell text
+            calculatorTable.rows[1].cells[3].textContent = 'studio / 1 person 1 bedroom dwelling';
+            calculatorTable.rows[2].cells[1].textContent = '2 person 1 bedroom dwelling';
+            calculatorTable.rows[3].cells[1].textContent = 'all other dwellings';
+
+            //calculate required parking
             logicController.calculateShortStayParking();
+            logicController.calculateLongStayParking();
+        } else {
+
+            //set Use Class and Land Use class text
+            landUseClassCell.textContent = landUseClassSelection;
+            landUseSubClassCell.textContent = subLandUseClassSelection;
+            //set the Quantum Type cell text
+            logicController.setQuantumType();
+            //calculate required parking
+            logicController.calculateShortStayParking();
+            logicController.calculateLongStayParking();
         };
     };
 
@@ -282,14 +327,42 @@ const logicController = (() => {
             parkingStandardsResult =longStayParkingStandards.find(x => x.subLandUse === selectedSubLandUse && x.higherStandards == higherStandardsOption);
         };
 
-        // if statement to return the rounded number of parking spaces, if a sub class is selected and a quantum input
+        // if statement to return the rounded number of parking spaces
+        
+        //return a message if no sub class is selected or no quantum input
         if (selectedSubLandUse === 'Select Sub-Class') {
             roundedLongStayParking = 'Select Sub-Class'
         } else if (inputQuantum <= 0) {
             roundedLongStayParking = 'Enter Quantum'
+
+        //handle dwellings case- "• 1 space per studio or 1 person 1 bedroom dwelling, 1.5 spaces per 2 person 1 bedroom dwelling, 2 spaces per all other dwellings"
+        //XXXXJSDFJDFIDFDOSFOSFDSOFDSFDFNF
+        } else if (selectedSubLandUse === 'dwellings (all)' && inputQuantum < parkingStandardsResult.lowerBoundary) {
+            roundedLongStayParking = 0;
+        } else if (selectedSubLandUse === 'dwellings (all)' && inputQuantum <= parkingStandardsResult.upperBoundary) {
+            roundedLongStayParking = parkingStandardsResult.lowerSpaces;
+        } else if (selectedSubLandUse === 'dwellings (all)') {
+            roundedLongStayParking = parkingStandardsResult.lowerSpaces + (inputQuantum - parkingStandardsResult.upperBoundary)/(parkingStandardsResult.upperRatio);
+            roundedLongStayParking = Math.ceil(roundedLongStayParking);
+
+        //handle all other cases
+        } else if (inputQuantum > parkingStandardsResult.boundary) {
+            inputQuantum = parseInt(inputQuantum,10);
+            //calculate the portion up to the boundary
+            roundedLongStayParking +=(parkingStandardsResult.boundary)/(parkingStandardsResult.lowerRatio);
+
+            //calculate the remaining portion of the quantum
+            let remainder = inputQuantum - parkingStandardsResult.boundary;
+            roundedLongStayParking += (remainder)/(parkingStandardsResult.upperRatio);
+
+            //round up
+            roundedLongStayParking = Math.ceil(roundedLongStayParking);
+
         } else {
-            inputQuantum = parseInt(inputQuantum,10)
-            roundedLongStayParking = Math.round((parkingStandardsResult.boundary/parkingStandardsResult.lowerRatio)+(inputQuantum-parkingStandardsResult.boundary)/parkingStandardsResult.upperRatio);
+            inputQuantum = parseInt(inputQuantum,10);
+
+            roundedLongStayParking = (inputQuantum)/(parkingStandardsResult.lowerRatio);
+            roundedLongStayParking = Math.ceil(rroundedLongStayParking);
         };
 
         return roundedLongStayParking;
