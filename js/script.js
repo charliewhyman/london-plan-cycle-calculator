@@ -13,8 +13,8 @@ const landUseDefinitions = [
    {landUse:'C2', subLandUse:'care homes / secure accommodation', quantumType:'FTE staff'},
    {landUse:'C3-C4', subLandUse:'dwellings (all)', quantumType:'dwellings'},
    {landUse:'D1', subLandUse:'nurseries', quantumType:'FTE staff/students'},
-   {landUse:'D1', subLandUse:'primary schools / secondary schools/ sixth form colleges', quantumType:'FTE staff/students'},
-   {landUse:'D1', subLandUse:'universities and colleges', quantumType:'FTE staff/students'},
+   {landUse:'D1', subLandUse:'primary schools / secondary schools/ sixth form colleges', quantumType:'FTE staff'},
+   {landUse:'D1', subLandUse:'universities and colleges', quantumType:'FTE staff'},
    {landUse:'D1', subLandUse:'health centre, including dentists', quantumType:'FTE staff'},
    {landUse:'D1', subLandUse:'other (e.g. library, church, etc.)', quantumType:'FTE staff'},
    {landUse:'D2', subLandUse:'sports (e.g. sports hall, swimming, gymnasium, etc.)', quantumType:'FTE staff'},
@@ -89,13 +89,15 @@ const shortStayParkingStandards = [
 
     {subLandUse:'dwellings (all)', onePersonOneBedroomRatio:1, twoPersonOneBedroomRatio:1.5, twoBedroomsPlusRatio:2},
 
-    {subLandUse:'nurseries', boundary:0, lowerRatio:8, upperRatio:8, secondaryQuantumType:'Students', secondaryRatio:8},
+    {subLandUse:'nurseries', boundary:0, lowerRatio:8, upperRatio:8},
 
-    {subLandUse:'primary schools / secondary schools/ sixth form colleges', boundary:0, lowerRatio:8, upperRatio:8, secondaryQuantumType:'Students', secondaryRatio:8},
+    {subLandUse:'primary schools / secondary schools/ sixth form colleges', boundary:0, lowerRatio:8, upperRatio:8},
 
-    {subLandUse:'universities and colleges', boundary:0, lowerRatio:4, upperRatio:4, secondaryQuantumType:'Students', secondaryRatio:20},
+    {subLandUse:'universities and colleges', boundary:0, lowerRatio:4, upperRatio:20},
 
     {subLandUse:'health centre, including dentists', boundary:0, lowerRatio:5, upperRatio:5},
+
+    {subLandUse:'other (e.g. library, church, etc.)', boundary:0, lowerRatio:8, upperRatio:8},
 
     {subLandUse:'sports (e.g. sports hall, swimming, gymnasium, etc.)', boundary:0, lowerRatio:8, upperRatio:8},
 
@@ -171,7 +173,7 @@ const displayController = (() => {
         let landUseClassCell = document.getElementById('landUseClassCell');
         let subLandUseClassSelection = subLandUseClassSel.options[subLandUseClassSel.selectedIndex].text;
         let landUseSubClassCell = document.getElementById('landUseSubClassCell');
-        
+
         generateTableCells(2,1);
 
          //merge the Use Class and Sub-Class cells
@@ -196,9 +198,13 @@ const displayController = (() => {
         let landUseClassCell = document.getElementById('landUseClassCell');
         let subLandUseClassSelection = subLandUseClassSel.options[subLandUseClassSel.selectedIndex].text;
         let landUseSubClassCell = document.getElementById('landUseSubClassCell');
+        let shortStayOutputLabel = document.getElementById('shortStayOutputLabel');
+        shortStayOutputLabel.textContent = 'Required short-stay'
 
-        // reset the table to initial state
-        calculatorTable.innerHTML = originalHTML;
+        //reset table rows
+        while(calculatorTable.rows.length > 2) {
+            calculatorTable.deleteRow(-1);
+          };
 
         //show all output boxes to start
         for(var i = 0; i < outputElements.length; i++){
@@ -258,12 +264,11 @@ const displayController = (() => {
                 a.style.display = 'none';
             };
 
-            let shortStayOutputLabel = document.getElementById('shortStayOutputLabel');
             shortStayOutputLabel.textContent = 'Total spaces';
             //calculate required parking
             logicController.calculateShortStayParking();
             logicController.calculateLongStayParking();
-        } else if (subLandUseClassSelection == 'primary schools / secondary schools/ sixth form colleges' || 'universities and colleges') {
+        } else if (subLandUseClassSelection == 'primary schools / secondary schools/ sixth form colleges' || subLandUseClassSelection == 'universities and colleges') {
             addStudentsRow();
             //set the Quantum Type cell text
             displayController.setQuantumType();
@@ -290,9 +295,7 @@ const displayController = (() => {
         let selectedLandUseObject = landUseDefinitions[landUseDefinitions.map(function (item) { return item.subLandUse; }).indexOf(selectedSubLandUse)];
         let selectedQuantumType = selectedLandUseObject.quantumType;
 
-        //set the 'Quantum Type' cell based on the selected sub-class
-        //if nursery, school or university sub-classes are selected, set the primary and secondary quantum types
-        
+        //set the 'Quantum Type' cell based on the selected sub-class        
         primaryQuantumTypeElement.textContent = selectedQuantumType;
     };
 
@@ -345,17 +348,46 @@ const logicController = (() => {
             roundedShortStayParking = 'Enter Quantum'
 
         //handle dwellings case- "5 to 40 dwellings: 2 spaces, Thereafter: 1 space per 40 dwellings"
-        } else if (selectedSubLandUse === 'dwellings (all)' && inputQuantum < parkingStandardsResult.lowerBoundary) {
-            roundedShortStayParking = 0;
-        } else if (selectedSubLandUse === 'dwellings (all)' && inputQuantum <= parkingStandardsResult.upperBoundary) {
-            roundedShortStayParking = parkingStandardsResult.lowerSpaces;
         } else if (selectedSubLandUse === 'dwellings (all)') {
-            roundedShortStayParking = parkingStandardsResult.lowerSpaces + (inputQuantum - parkingStandardsResult.upperBoundary)/(parkingStandardsResult.upperRatio);
-            roundedShortStayParking = Math.ceil(roundedShortStayParking);
+            let onePersonOneBedroomInput = inputQuantum;
+            let twoPersonOneBedroomInput = document.getElementById('quantumInputTwo').value;
+            let twoBedroomsPlusInput = document.getElementById('quantumInputThree').value;
 
+            inputQuantum = +onePersonOneBedroomInput + +twoPersonOneBedroomInput + +twoBedroomsPlusInput;
+
+            if (inputQuantum < parkingStandardsResult.lowerBoundary) {
+                roundedShortStayParking = 0;
+            } else if (selectedSubLandUse === 'dwellings (all)' && inputQuantum <= parkingStandardsResult.upperBoundary) {
+                roundedShortStayParking = parkingStandardsResult.lowerSpaces;
+            } else if (selectedSubLandUse === 'dwellings (all)') {
+                roundedShortStayParking = parkingStandardsResult.lowerSpaces + (inputQuantum - parkingStandardsResult.upperBoundary)/(parkingStandardsResult.upperRatio);
+                roundedShortStayParking = Math.ceil(roundedShortStayParking);
+        };
         
+    // handle nursery land use case (FTE Staff + Students)
+        } else if (selectedSubLandUse == 'nurseries') {
+            inputQuantum = parseInt(inputQuantum,10);
+            let studentInputQuantum = document.getElementById('studentInput').value || 0;
+            studentInputQuantum = parseInt(studentInputQuantum,10);
         
-            //handle all other cases
+            let staffParking = (inputQuantum/parkingStandardsResult.lowerRatio);
+
+            let studentParking = (studentInputQuantum/parkingStandardsResult.upperRatio);
+            //round up
+            roundedShortStayParking = Math.ceil(staffParking + studentParking);
+    // handle primary school land use case (FTE Staff + Students for long-stay, Students only for short-case)
+        } else if (selectedSubLandUse == 'primary schools / secondary schools/ sixth form colleges' || selectedSubLandUse == 'universities and colleges') {
+            inputQuantum = parseInt(inputQuantum,10);
+            let studentInputQuantum = document.getElementById('studentInput').value || 0;
+            if (studentInputQuantum >= 0) {
+                studentInputQuantum = parseInt(studentInputQuantum,10);
+        
+                let studentParking = (studentInputQuantum/parkingStandardsResult.upperRatio);
+                //round up
+                roundedShortStayParking = Math.ceil(studentParking);
+            };    
+  
+    //handle all other cases
         } else if (inputQuantum > parkingStandardsResult.boundary) {
             inputQuantum = parseInt(inputQuantum,10);
             //calculate the portion up to the boundary
@@ -394,20 +426,37 @@ const logicController = (() => {
         };
 
         // if statement to return the rounded number of parking spaces
-        
         //return a message if no sub class is selected or no quantum input
         if (selectedSubLandUse === 'Select Sub-Class') {
             roundedLongStayParking = 'Select Sub-Class'
         } else if (inputQuantum <= 0) {
             roundedLongStayParking = 'Enter Quantum'
 
+        // handle primary school land use case (FTE Staff + Students for long-stay, Students only for short-case)
+        } else if (selectedSubLandUse == 'primary schools / secondary schools/ sixth form colleges' || selectedSubLandUse == 'universities and colleges') {
+            inputQuantum = parseInt(inputQuantum,10);
+            let studentInputQuantum = document.getElementById('studentInput').value || 0;
+            if (studentInputQuantum >= 0) {
+                studentInputQuantum = parseInt(studentInputQuantum,10);
+            
+                let staffParking = (inputQuantum/parkingStandardsResult.lowerRatio);
+
+                let studentParking = (studentInputQuantum/parkingStandardsResult.upperRatio);
+                //round up
+                roundedLongStayParking = Math.ceil(staffParking + studentParking);
+            }; 
+
         //handle dwellings case- "• 1 space per studio or 1 person 1 bedroom dwelling, 1.5 spaces per 2 person 1 bedroom dwelling, 2 spaces per all other dwellings"
-        } else if (selectedSubLandUse === 'dwellings (all)' && inputQuantum < parkingStandardsResult.lowerBoundary) {
-            roundedLongStayParking = 0;
-        } else if (selectedSubLandUse === 'dwellings (all)' && inputQuantum <= parkingStandardsResult.upperBoundary) {
-            roundedLongStayParking = parkingStandardsResult.lowerSpaces;
         } else if (selectedSubLandUse === 'dwellings (all)') {
-            roundedLongStayParking = parkingStandardsResult.lowerSpaces + (inputQuantum - parkingStandardsResult.upperBoundary)/(parkingStandardsResult.upperRatio);
+            let onePersonOneBedroomInput = inputQuantum;
+            let twoPersonOneBedroomInput = document.getElementById('quantumInputTwo').value;
+            let twoBedroomsPlusInput = document.getElementById('quantumInputThree').value;
+
+            let onePersonOneBedroomParking = onePersonOneBedroomInput*parkingStandardsResult.onePersonOneBedroomRatio;
+            let twoPersonOneBedroomParking = twoPersonOneBedroomInput*parkingStandardsResult.twoPersonOneBedroomRatio;
+            let twoBedroomsPlusParking = twoBedroomsPlusInput*parkingStandardsResult.twoBedroomsPlusRatio;
+
+            roundedLongStayParking = onePersonOneBedroomParking + twoPersonOneBedroomParking + twoBedroomsPlusParking;
             roundedLongStayParking = Math.ceil(roundedLongStayParking);
 
         //handle all other cases
@@ -427,7 +476,7 @@ const logicController = (() => {
             inputQuantum = parseInt(inputQuantum,10);
 
             roundedLongStayParking = (inputQuantum)/(parkingStandardsResult.lowerRatio);
-            roundedLongStayParking = Math.ceil(rroundedLongStayParking);
+            roundedLongStayParking = Math.ceil(roundedLongStayParking);
         };
 
         return roundedLongStayParking;
